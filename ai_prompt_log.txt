@@ -1,0 +1,166 @@
+    Prompt 1:
+Việc làm phẳng mã nguồn bằng Guard Clauses giúp ích gì cho Cyclomatic Complexity (Độ phức tạp tính toán) của hàm này?
+    AI trả lời:
+Guard Clauses giúp “làm phẳng” code, nhưng cần phân biệt rõ: chúng không nhất thiết làm giảm Cyclomatic Complexity (CC), mà chủ yếu làm giảm độ phức tạp nhận thức và độ sâu lồng nhau.
+
+    Prompt 2: Hãy đào sâu về lý thuyết Clean Code, De Morgan's laws.
+    AI trả lời:
+1. Clean Code là gì (không phải kiểu “code đẹp”)
+
+Clean Code không phải là “code ít dòng” hay “code nhìn gọn”.
+
+Nó là:
+
+Code dễ đọc – dễ hiểu – dễ sửa – dễ kiểm thử – dễ thay đổi mà không gây sợ hãi.
+
+5 nguyên tắc lõi (cốt lõi nhất)
+1.1. Code đọc nhiều hơn viết
+
+Bạn sẽ đọc code nhiều hơn gấp 10 lần so với viết.
+
+➡ Vì vậy:
+
+ưu tiên dễ hiểu
+không ưu tiên “thông minh”
+1.2. Tên quan trọng hơn logic
+if (user.age > 18)
+
+kém hơn:
+
+if (isEligibleAdult(user))
+
+➡ Clean Code = chuyển logic thành ngôn ngữ con người.
+
+1.3. Hàm nhỏ – một nhiệm vụ
+
+Một hàm nên:
+
+làm 1 việc
+có 1 lý do để thay đổi
+1.4. Ít “mental load” (tải nhận thức)
+
+Code tốt là code:
+
+đọc từ trên xuống
+không cần giữ nhiều trạng thái trong đầu
+
+➡ Guard Clause bạn hỏi chính là phục vụ mục tiêu này.
+
+1.5. Logic rõ hơn “tối ưu số dòng”
+
+Sai:
+
+if (a && b && !c || d)
+
+Đúng:
+
+if (isValidRequest(user))
+2. De Morgan’s Laws trong lập trình
+
+De Morgan's laws là quy tắc biến đổi logic phủ định.
+
+2.1. Hai luật cơ bản
+(1)
+!(A && B) = !A || !B
+(2)
+!(A || B) = !A && !B
+2.2. Ý nghĩa trực giác
+“Phủ định của AND”
+
+Không phải cả hai đúng
+= ít nhất một cái sai
+
+“Phủ định của OR”
+
+Không phải cái nào đúng
+= tất cả đều sai
+
+3. Ứng dụng trong Clean Code (rất quan trọng)
+3.1. Tránh phủ định phức tạp
+❌ Khó đọc
+if (!(user.isLoggedIn && user.hasPassport)) {
+    deny();
+}
+✔ Dùng De Morgan
+if (!user.isLoggedIn || !user.hasPassport) {
+    deny();
+}
+
+➡ Dễ đọc hơn vì:
+
+“hoặc cái này sai hoặc cái kia sai”
+3.2. Kết hợp với Guard Clauses
+
+Ví dụ:
+
+❌ nested + phủ định
+if (!(user.isLoggedIn && user.hasPassport)) {
+    return deny();
+}
+✔ Clean Code + De Morgan
+if (!user.isLoggedIn) return deny();
+if (!user.hasPassport) return deny();
+
+➡ rõ ràng từng lý do fail
+
+4. Liên hệ với code bạn đưa (rất quan trọng)
+
+Ví dụ sai logic:
+
+if (user.accountBalance >= flight.price)
+
+De Morgan không trực tiếp sửa lỗi này, nhưng tư duy logic giúp bạn nhận ra:
+
+điều kiện đang viết theo “điều kiện đạt”
+nhưng message lại là “bị từ chối”
+
+➡ Clean Code khuyến khích:
+
+viết theo positive intent (ý định dương)
+4.1. Viết lại theo hướng “pass conditions”
+
+Thay vì check fail:
+
+if (user.accountBalance < flight.price) return deny();
+
+➡ rõ ràng hơn rất nhiều
+
+5. Clean Code + De Morgan = “Logic không cần dịch ngược”
+Vấn đề phổ biến:
+
+Developer thường viết:
+
+logic A
+rồi phủ định nó trong đầu để hiểu
+Mục tiêu Clean Code:
+
+Code phải đúng nghĩa ngay khi đọc, không cần đảo logic trong đầu.
+
+6. Khi nào nên dùng De Morgan?
+NÊN dùng khi:
+điều kiện có nhiều toán tử &&, ||
+có dấu ! phức tạp
+cần giảm “brain parsing cost”
+KHÔNG cần dùng khi:
+điều kiện đã đơn giản
+việc đổi làm code dài hơn mà không rõ hơn
+7. Kết luận (cốt lõi)
+Clean Code:
+giảm “gánh nặng tư duy”
+ưu tiên người đọc hơn máy
+De Morgan:
+công cụ biến đổi logic
+giúp “giải phóng phủ định phức tạp”
+Khi kết hợp:
+
+➡ bạn biến điều kiện kiểu:
+
+!(A && B || C)
+
+thành:
+
+!A || !B || C
+
+hoặc tốt hơn:
+
+if (!isValidUser(user)) return;
